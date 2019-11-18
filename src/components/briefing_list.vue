@@ -8,7 +8,6 @@
                 </th>
                 <th>
                     <router-link to="/briefing_list">説明会管理</router-link>
-
                 </th>
             </tr>
             <tr>
@@ -22,21 +21,16 @@
             </tr>
         </table>
         <hr>
-
         <table align="center">
-            <tr id="table_header">
+            <thead>
+            <tr>
                 <th></th>
-                <th>求人No</th>
-                <th>区分</th>
-                <th>企業名</th>
-                <th>内容</th>
-                <th>日付</th>
-                <th>職種</th>
-                <th>対象</th>
-                <th>留学生</th>
-                <th>障がい者</th>
+                <th v-for="(value,key) in columns" v-bind:key="key">
+                    {{value}}
+                </th>
                 <th></th>
             </tr>
+            </thead>
             <tr id="table_search">
                 <td width="10"><img src="../search.png"></td>
                 <td width="22"><input v-model="job_offer_no" size="22" placeholder="求人No.検索"></td>
@@ -67,18 +61,24 @@
                 </select></td>
                 <td></td>
             </tr>
-            <tr id="table_record">
+<!--            <tr id="table_record">-->
+<!--                <td></td>-->
+<!--                <td width="22"><input v-model="job_offer_no" size="22"></td>-->
+<!--                <td width="15"><input v-model="district" size="15"></td>-->
+<!--                <td width="40"><input v-model="company_name" size="40"></td>-->
+<!--                <td width="15"><input v-model="content" size="15"></td>-->
+<!--                <td width="20"><input v-model="briefing_date" size="20"></td>-->
+<!--                <td width="40"><input v-model="occupation" size="40"></td>-->
+<!--                <td width="20"><input v-model="target" size="20"></td>-->
+<!--                <td width="10"><input v-model="international" size="10"></td>-->
+<!--                <td width="10"><input v-model="disability" size="10"></td>-->
+<!--                <td></td>-->
+<!--            </tr>-->
+            <tr v-for="task in filteredTasks">
                 <td></td>
-                <td width="22"><input v-model="job_offer_no" size="22"></td>
-                <td width="15"><input v-model="district" size="15"></td>
-                <td width="40"><input v-model="company_name" size="40"></td>
-                <td width="15"><input v-model="content" size="15"></td>
-                <td width="20"><input v-model="briefing_date" size="20"></td>
-                <td width="40"><input v-model="occupation" size="40"></td>
-                <td width="20"><input v-model="target" size="20"></td>
-                <td width="10"><input v-model="international" size="10"></td>
-                <td width="10"><input v-model="disability" size="10"></td>
-                <td></td>
+                <td v-for="(value,key) in columns">
+                    {{task[key]}}
+                </td>
             </tr>
         </table>
 
@@ -99,6 +99,64 @@
             international:String,
             disability:String,
         },
+        data:function () {
+            let columns = {
+                job_offer_no:'求人No.',
+                district:'区分',
+                company_name:'企業名',
+                content:'内容',
+                briefing_date:'開催日時',
+                occupation:'職種',
+                target:'対象',
+                international:'留学生',
+                disability:'障がい者',
+            };
+            let sortOrders  ={};
+            Object.keys(columns).forEach(function (key) {
+                sortOrders[key] = 1
+            });
+            return{
+                columns:columns,
+                tasks:[
+                    {
+                        job_offer_no:100001,
+                        district:'福岡',
+                        company_name:'麻生情報ビジネス',
+                        content:'セミナー',
+                        briefing_date:'2019-11-01',
+                        occupation:'SE',
+                        target:'情報系',
+                        international:'◯',
+                        disability:'◯'
+                    },
+                ],
+                sortKey:'',
+                sortOrders:sortOrders
+            }
+        },
+        methods: {
+            sortBy: function () {
+                this.sortKey = key;
+                this.sortOrders[key] = this.sortOrders[key] * -1;
+            }
+        },
+        computed:{
+            filteredTasks:function(){
+                let data = this.tasks;
+
+                let sortKey = this.sortKey;
+                let order = this.sortOrders[sortKey] || 1;
+
+                if(sortKey){
+                    data = data.slice().sort(function (a,b) {
+                        a = a[sortKey];
+                        b = b[sortKey];
+                        return (a === b ? 0 : a > b ? 1 : -1) * order;
+                    })
+                }
+                return data;
+            }
+        }
     }
 </script>
 

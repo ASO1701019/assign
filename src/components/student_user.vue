@@ -29,12 +29,13 @@
                 <th width="30">状況</th>
                 <th>感情</th>
             </tr>
-            <tr id="table_search">
+            <tr id="table_search" >
                 <td><img src="../search.png"></td>
                 <td><input v-model.number="student_number" size="25" placeholder="学籍番号検索"></td>
                 <td width="22"><input v-model="student_name" size="22" placeholder="名前検索"></td>
                 <td width="15"><select v-model="student_sex">
                     <option disabled>性別</option>
+                    <option>--</option>
                     <option>男</option>
                     <option>女</option>
                 </select></td>
