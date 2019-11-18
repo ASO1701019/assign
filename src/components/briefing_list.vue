@@ -22,11 +22,13 @@
         </table>
         <hr>
         <table align="center">
+            <input type="text" v-model="searchWord" placeholder="キーワード検索">
             <thead>
             <tr>
                 <th></th>
-                <th v-for="(value,key) in columns" v-bind:key="key">
+                <th v-for="(value,key) in columns" @click="sortBy(key)">
                     {{value}}
+                    <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
                 </th>
                 <th></th>
             </tr>
@@ -74,12 +76,15 @@
 <!--                <td width="10"><input v-model="disability" size="10"></td>-->
 <!--                <td></td>-->
 <!--            </tr>-->
-            <tr v-for="task in filteredTasks">
+            <tbody>
+            <tr id="table_record" v-for="task in filteredTasks">
                 <td></td>
                 <td v-for="(value,key) in columns">
                     {{task[key]}}
                 </td>
+                <td></td>
             </tr>
+            </tbody>
         </table>
 
     </div>
@@ -88,17 +93,17 @@
 <script>
     export default {
         name: "briefing_list",
-        props:{
-            job_offer_no:Number,
-            district:String,
-            company_name:String,
-            content:String,
-            briefing_date:Date,
-            occupation:String,
-            target:String,
-            international:String,
-            disability:String,
-        },
+        // props:{
+        //     job_offer_no:Number,
+        //     district:String,
+        //     company_name:String,
+        //     content:String,
+        //     briefing_date:Date,
+        //     occupation:String,
+        //     target:String,
+        //     international:String,
+        //     disability:String,
+        // },
         data:function () {
             let columns = {
                 job_offer_no:'求人No.',
@@ -115,8 +120,10 @@
             Object.keys(columns).forEach(function (key) {
                 sortOrders[key] = 1
             });
+
             return{
                 columns:columns,
+                searchWord:'',
                 tasks:[
                     {
                         job_offer_no:100001,
@@ -129,13 +136,35 @@
                         international:'◯',
                         disability:'◯'
                     },
+                    {
+                        job_offer_no:100002,
+                        district:'福岡',
+                        company_name:'麻生情報ビジネス',
+                        content:'セミナー',
+                        briefing_date:'2019-10-01',
+                        occupation:'SE',
+                        target:'情報系',
+                        international:'◯',
+                        disability:'◯'
+                    },
+                    {
+                        job_offer_no:100003,
+                        district:'福岡',
+                        company_name:'麻生情報ビジネス',
+                        content:'セミナー',
+                        briefing_date:'2019-12-01',
+                        occupation:'SE',
+                        target:'情報系',
+                        international:'◯',
+                        disability:'◯'
+                    },
                 ],
                 sortKey:'',
                 sortOrders:sortOrders
             }
         },
         methods: {
-            sortBy: function () {
+            sortBy: function (key) {
                 this.sortKey = key;
                 this.sortOrders[key] = this.sortOrders[key] * -1;
             }
@@ -146,6 +175,16 @@
 
                 let sortKey = this.sortKey;
                 let order = this.sortOrders[sortKey] || 1;
+
+                let filterWord = this.searchWord && this.searchWord.toLowerCase();
+
+                if(filterWord){
+                    data  =data.filter(function (row) {
+                        return Object.keys(row).some(function (key) {
+                            return String(row[key]).toLowerCase().indexOf(filterWord) > -1
+                        })
+                    })
+                }
 
                 if(sortKey){
                     data = data.slice().sort(function (a,b) {
