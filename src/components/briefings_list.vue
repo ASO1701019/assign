@@ -1,6 +1,8 @@
 <template>
     <div id="app">
+
         <!--header-->
+
         <table border="1" width="100%">
             <tr>
                 <th>
@@ -16,7 +18,7 @@
                     &nbsp;&nbsp;&nbsp;
                     <router-link to="/calendar">カレンダー</router-link>
                     <router-link to="/briefing_add" style="position: absolute; right: 15%;">新規説明会追加</router-link>
-                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">
+<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
                 </td>
             </tr>
         </table>
@@ -25,7 +27,6 @@
         <!--body-->
 
         <input type="text" v-model="searchWord" placeholder="キーワード検索">
-
 
         <table align="center">
             <thead>
@@ -38,14 +39,6 @@
             </tr>
             </thead>
             <tbody>
-<!--            <tr v-for="(briefing,index) in filteredBriefings">-->
-<!--                    <td v-for="(value,key) in columns">-->
-<!--                        <input v-model="briefings[index][key]">-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <button v-on:click="click_update(briefing)">更新</button>-->
-<!--                    </td>-->
-<!--            </tr>-->
             <tr v-for="(briefing,index) in filteredBriefings">
                 <td v-for="(value,key) in columns">
                     <input v-model="briefings[index][key]">
@@ -129,8 +122,6 @@
                     })
                     .then(function (data) {
                         console.log(data);
-                        // let obj = JSON.parse(data);
-                        // console.log(obj);
                     })
                     .catch(function (error) {
                         console.log(error)
@@ -171,9 +162,6 @@
                     return response.json();
                 })
                 .then(function(res) {
-                    // console.log(res);
-                    // let obj=JSON.parse(res);
-                    // const obj_data = obj['data'];
                     const obj_data = res['data'];
                     console.log(obj_data);
                     obj_data.forEach(data => {
@@ -202,7 +190,6 @@
                             supplementary:data['supplementary'],
                             update_date:data['update_date'],
                         };
-                        // console.log(briefing_item)
                         hoge.briefings.push(briefing_item)
                     });
 

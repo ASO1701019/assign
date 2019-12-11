@@ -17,7 +17,7 @@
                     &nbsp;&nbsp;&nbsp;
                     <router-link to="/calendar">カレンダー</router-link>
                     <router-link to="/briefing_add" style="position: absolute; right: 15%;">新規説明会追加</router-link>
-                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">
+<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
                 </td>
             </tr>
         </table>

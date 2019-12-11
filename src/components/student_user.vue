@@ -1,6 +1,8 @@
 <template>
     <div id="app">
+
         <!--header-->
+
         <table border="1" width="100%">
             <tr>
                 <th>
@@ -13,13 +15,14 @@
             <tr>
                 <td colspan="2" class="colspan">
                     学生ユーザー一覧
-                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">
+<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
                 </td>
             </tr>
         </table>
         <hr>
 
         <!--body-->
+
         <input type="text" v-model="searchWord" placeholder="キーワード検索">
 
         <table align="center">
@@ -39,6 +42,7 @@
             </tr>
             </tbody>
         </table>
+
     </div>
 </template>
 
