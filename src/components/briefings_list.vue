@@ -38,13 +38,21 @@
             </tr>
             </thead>
             <tbody>
+<!--            <tr v-for="(briefing,index) in filteredBriefings">-->
+<!--                    <td v-for="(value,key) in columns">-->
+<!--                        <input v-model="briefings[index][key]">-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                        <button v-on:click="click_update(briefing)">更新</button>-->
+<!--                    </td>-->
+<!--            </tr>-->
             <tr v-for="(briefing,index) in filteredBriefings">
-                    <td v-for="(value,key) in columns">
-                        <input v-model="briefings[index][key]">
-                    </td>
-                    <td>
-                        <button v-on:click="click_update(briefing)">更新</button>
-                    </td>
+                <td v-for="(value,key) in columns">
+                    <input v-model="briefings[index][key]">
+                </td>
+                <td>
+                    <button v-on:click="click_update(briefing)">更新</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -109,6 +117,7 @@
                     disability_flg:array.disability_flg,
                     supplementary:array.supplementary,
                 };
+                console.log(update_briefing);
                 const json_data = JSON.stringify(update_briefing);
                 fetch('http://ec2-18-177-93-10.ap-northeast-1.compute.amazonaws.com/assignDB/event/event_update.php',{
                     method:'POST',
