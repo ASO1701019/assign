@@ -1,97 +1,156 @@
 <template>
     <div id="app">
+
+        <!--header-->
+
         <table border="1" width="100%">
             <tr>
                 <th>
                     <router-link to="/student_user">ユーザー管理</router-link>
                 </th>
                 <th>
-                    <router-link to="/briefing_list">説明会管理</router-link>
+                    <router-link to="/briefings_list">説明会管理</router-link>
                 </th>
             </tr>
             <tr>
                 <td colspan="2" class="colspan">
                     学生ユーザー一覧
-                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">
+<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
                 </td>
             </tr>
         </table>
         <hr>
-        <table align="center">
-            <tr id="header">
-                <th></th>
-                <th width="25">学籍番号</th>
-                <th width="22">名前</th>
-                <th width="15">性別</th>
-                <th width="15">年齢</th>
-                <th width="40">所属</th>
-                <th width="15">学年</th>
-                <th width="30">状況</th>
-                <th>感情</th>
-            </tr>
-            <tr id="table_search" >
-                <td><img src="../search.png"></td>
-                <td><input v-model.number="student_number" size="25" placeholder="学籍番号検索"></td>
-                <td width="22"><input v-model="student_name" size="22" placeholder="名前検索"></td>
-                <td width="15"><select v-model="student_sex">
-                    <option disabled>性別</option>
-                    <option>--</option>
-                    <option>男</option>
-                    <option>女</option>
-                </select></td>
-                <td width="15"><input v-model.number="student_age" size="15" placeholder="年齢検索"></td>
-                <td width="40"><input v-model="student_department" size="40" placeholder="所属検索"></td>
-                <td width="15"><input v-model.number="student_grade" size="15" placeholder="学年検索"></td>
-                <td width="30"><input v-model="student_status" size="30" placeholder="状況検索"></td>
-                <td><select v-model="student_emotion">
-                    <option disabled selected value>感情</option>
-                    <option value="良️">⭕️</option>
-                    <option value="悪">✖︎</option>
-                </select></td>
-            </tr>
-            <tr id="table_record">
-                <td></td>
-                <td width="25"><input type="text" size="25"></td>
-                <td width="22"><input type="text" size="22"></td>
-                <td width="15"><input type="text" size="15"></td>
-                <td width="15"><input type="text" size="15"></td>
-                <td width="40"><input type="text" size="40"></td>
-                <td width="15"><input type="text" size="15"></td>
-                <td width="35"><input type="text" size="35"></td>
-                <td>⭕</td>
-            </tr>
-        </table>
+
+        <!--body-->
+
+        <vue-good-table :columns="columns"
+                        :rows="students"
+                        :search-options="{enabled: true,placeholder: 'Search this table',}">
+        </vue-good-table>
+
     </div>
 </template>
 
 <script>
     export default {
         name: "student_user",
-        props:{
-            student_number:Number,
-            student_name:String,
-            student_sex:String,
-            student_age:Number,
-            student_department:String,
-            student_grade:Number,
-            student_status:String,
-            student_emotion:String
-        }
+        data:function() {
+            const columns = [
+                {
+                    label:'学籍番号',
+                    field:'student_number',
+                    type:'number',
+                },
+                {
+                    label:'氏名',
+                    field:'student_name',
+                },
+                {
+                    label:'性別',
+                    field:'student_sex',
+                },
+                {
+                    label:'年齢',
+                    field:'student_age',
+                },
+                {
+                    label:'所属',
+                    field:'student_belong',
+                },
+                {
+                    label:'学年',
+                    field:'student_grade',
+                },
+                {
+                    label:'状況',
+                    field:'student_status',
+                },
+                {
+                    label:'感情',
+                    field:'student_emotion',
+                },
+            ];
+
+            return{
+                students:[],
+                columns:columns,
+            }
+        },
+
+        methods:{
+            sortBy: function (key) {
+                this.sortKey = key;
+                this.sortOrders[key] = this.sortOrders[key] * -1;
+            },
+        },
+        computed:{
+            filteredStudents:function(){
+                let data = this.students;
+
+                let sortKey = this.sortKey;
+                let order = this.sortOrders[sortKey] || 1;
+
+                let filterWord = this.searchWord && this.searchWord.toLowerCase();
+
+                if(filterWord){
+                    data = data.filter(function (row) {
+                        return Object.keys(row).some(function (key) {
+                            return String(row[key]).toLowerCase().indexOf(filterWord) > -1
+                        })
+                    })
+                }
+
+                if(sortKey){
+                    data = data.slice().sort(function (a,b) {
+                        a = a[sortKey];
+                        b = b[sortKey];
+                        return (a === b ? 0 : a > b ? 1 : -1) * order;
+                    })
+                }
+                return data;
+            }
+        },
+        created(){
+            let hoge = this;
+            fetch('http://ec2-18-177-93-10.ap-northeast-1.compute.amazonaws.com/assignDB/student_all_post.php')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(res) {
+                    console.log(res);
+                    // let obj=JSON.parse(res);
+                    // const obj_data = obj['data'];
+                    const obj_data = res['data'];
+                    console.log(obj_data);
+                    obj_data.forEach(data => {
+                        let student_item = {
+                            student_number: data['student_number'],
+                            student_slack_token: data['student_slack_token'],
+                            student_name: data['student_name'],
+                            student_sex: data['student_sex'],
+                            student_age: data['student_age'],
+                            student_belong: data['student_belong'],
+                            student_grade: data['student_grade'],
+                            student_status: data['student_status'],
+                            student_emotion: data['student_emotion'],
+                            student_login: data['student_login'],
+                        };
+                        // console.log(student_item)
+                        hoge.students.push(student_item)
+                    });
+
+                })
+
+        },
+
     }
 </script>
 
 <style scoped>
     table{
         border-collapse: collapse;
-        border-left: gray;
-        border-right: gray;
     }
-    tr#table_record{
-        border-right: solid 1px gray;
-        border-left: solid 1px gray;
-        border-bottom: solid 1px gray;
-    }
-    tr#table_search{
+    tr{
         border: solid 1px gray;
     }
 </style>

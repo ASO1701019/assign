@@ -1,196 +1,156 @@
 <template>
     <div id="app">
+
         <!--ヘッダー-->
+
         <table border="1" width="100%">
             <tr>
                 <th>
                     <router-link to="/student_user">ユーザー管理</router-link>
                 </th>
                 <th>
-                    <router-link to="/briefing_list">説明会管理</router-link>
+                    <router-link to="/briefings_list">説明会管理</router-link>
 
                 </th>
             </tr>
             <tr>
                 <td colspan="2" class="colspan">
-                    <router-link to="/briefing_list">説明会管理</router-link>
+                    <router-link to="/briefings_list">説明会管理</router-link>
                     &nbsp;&nbsp;&nbsp;
                     <router-link to="/calendar">カレンダー</router-link>
                     <router-link to="/briefing_add" style="position: absolute; right: 15%;">新規説明会追加</router-link>
-                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">
+<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
                 </td>
             </tr>
         </table>
         <hr>
 
-        <div style="border: 1px solid #cccccc; padding: 10px;">
-            <table align="center">
-                <tr>
-                    <td width="22"><input v-model="job_offer_no" size="22" placeholder="求人No."></td><!--求人No.-->
-                    <td width="15"><select v-model="district" name="district"><!--区分 -->
-                        <option disabled value="">区分</option>
-                        <option value="福岡校">福岡校</option>
-                        <option value="北九州校">北九州校</option>
-                    </select></td>
-                    <td width="40"><input v-model="company_name" size="40" placeholder="企業名"></td>  <!-- 企業名-->
-                    <td width="15"><select v-model="content" name="Content">                    <!--内容 -->
-                        <option disabled value="">内容</option>
-                        <option value="説明会">説明会</option>
-                        <option value="セミナー">セミナー</option>
-                        <option value="OB会">OB会</option>
-                    </select></td>
-                    <td width="20"><input v-model="briefing_date" size="20"></td><!--開催日-->
-                    <vuejs-datepicker v-model="briefing_date" ></vuejs-datepicker>
-                    <td width="40"><input type="text" size="40" placeholder="職種"></td>    <!--職種 -->
-                    <td width="20"><input type="text" size="20" placeholder="対象"></td>    <!--対象 -->
-                    <td width="10"><select name="International" id="International">        <!--留学生 -->
-                        <option disabled selected value>留学生</option>
-                        <option value="◯">◯</option>
-                        <option value="×">×</option>
-                    </select></td>
-                    <td width="10"><select name="Disability" id="Disability">        <!--障がい者 -->
-                        <option disabled selected value>障がい者</option>
-                        <option value="◯">◯</option>
-                        <option value="×">×</option>
-                    </select></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <div align="left" style="border: 2px solid #cccccc; padding: 10px; margin: 0 5% 5px 5%;">
-            <table>
-                <tr>
-                    <th>開催時間</th>
-                    <td>
-                        <select name="Start_time" id="Start_time"><!-- 開始時間-->
-                            <option disabled selected value>----</option>
-                            <option v-for="start_hour of time" v-bind:key="start_hour.value">
-                                {{start_hour.value}}
-                            </option>
-                        </select>
-                        <span> 〜 </span>
-                        <select name="last_time" id="last_time"><!-- 開始時間-->
-                            <option disabled selected value>----</option>
-                            <option v-for="last_hour of time" v-bind:key="last_hour.value">
-                                {{last_hour.value}}
-                            </option>
-                        </select>
-<!--                        <select name="Last_time" id="Last_time">-->
-<!--                            <option disabled selected value>&#45;&#45;&#45;&#45;</option>-->
-<!--                            <option v-for="last_hour of time" v-bind:key="last_hour.value">-->
-<!--                                {{last_hour.value}}-->
-<!--                            </option>-->
-<!--                        </select>-->
-                        <v-hour-minute></v-hour-minute>
-                    </td>
-                </tr>
-                <tr>
-                    <th>開催場所</th>
-                    <td>
-                        <input type="text" id="Briefing_place" size="40"><br><!--開催場所-->
-                    </td>
-                </tr>
-                <tr>
-                    <th>持参物</th>
-                    <td>
-                        <input type="text" id="Briefing_Bring" size="40"><br><!--持参物-->
+        <!--body-->
 
-                    </td>
+        <div id="insert_data_area">
+            <table>
+                <tr v-for="(value,key) in rows">
+                    <th>{{value}}</th>
+                    <td><input v-model="briefing[key]"></td>
                 </tr>
-                <tr>
-                    <th>説明会入力〆切</th>
-                    <td>
-                        <input type="date" name="Deadline_year" id="Deadline_year"><!-- 説明会入力〆切 --> <!--〆切年 -->
-<!--                        <vuejs-datepicker></vuejs-datepicker>-->
-                    </td>
-                </tr>
-                <tr>
-                    <th>受験確認入力〆切</th>
-                    <td>
-                        <input type="date" name="Exam_year" id="Exam_year"><!-- 受験確認入力〆切 --> <!--〆切年 -->
-                    </td>
-                </tr>
-                <tr>
-                    <th>勤務地</th>
-                    <td>
-                        <input type="text" id="Work_Location" size="20"><!--勤務地-->
-                    </td>
-                </tr>
-                <tr>
-                    <th>説明会参加数</th>
-                    <td>
-                        <input type="text" id="Briefing_Number" size="10"><!--説明会参加数--> <!-- DBから読み込む -->
-                    </td>
-                </tr>
-                <tr>
-                    <th>受験参加数</th>
-                    <td>
-                        <input type="text" id="Exam_Number" size="10"><!--受験参加数--> <!--DBから読み込む-->
-                    </td>
-                </tr>
-                <tr>
-                    <th>内定数</th>
-                    <td>
-                        <input type="text" id="Offer_Number" size="10"> <!--内定数--> <!--DBから読み込む-->
-                    </td>
-                </tr>
-                <tr>
-                    <th>備考</th>
-                    <td>
-                        <input type="text" id="Briefing_Remarks" size="150"><!--備考-->
-                    </td>
-                </tr>
+                <button id="insert_data_btn" v-on:click="data_insert(briefing)">追加</button>
             </table>
         </div>
-        <input type="button" id="Briefing_Join" value="追加" style="position: absolute; right: 5%;">
+
     </div>
 </template>
 
 <script>
     export default {
         name: "briefing_add",
-        props:{
-            job_offer_no:Number,
-            district:String,
-            company_name:String,
-            content:String,
-            briefing_date:Date,
-            occupation:String,
-            target:String,
-            international:String,
-            disability:String,
-        },
-        component:{
-            props: {
-                name:String,
-                value:String
-            }
-        },
         data:function(){
+            let rows = {
+                joboffer_number:'求人No.',
+                division:'区分',
+                company_name:'企業名',
+                content:'内容',
+                event_date:'開催日時',
+                occupation:'職種',
+                target:'対象',
+                international_flg:'留学生',
+                disability_flg:'障がい者',
+                start_time:'開始時間',
+                finish_time:'終了時間',
+                venue:'開催場所',
+                bring_item:'持参物',
+                briefing_deadline:'説明会〆切',
+                exam_deadline:'受験〆切',
+                workplace:'勤務地',
+                briefing_number:'説明会参加者数',
+                exam_number:'受験者数',
+                offer_number:'内定数',
+                supplementary:'備考',
+            };
+            let insert_briefing = {
+                finish_flg: 0,
+                division: '福岡校',
+                joboffer_number: '1739867',
+                event_date: '2020-03-04',
+                start_time: '10:00:00',
+                finish_time: '12:00:00',
+                company_name: 'JK株式会社',
+                venue: '201',
+                occupation: 'SE',
+                content: '説明会',
+                bring_item: '特になし',
+                briefing_deadline: '2020-01-07',
+                exam_deadline: '2020-01-07',
+                workplace: '東京',
+                briefing_number: 0,
+                exam_number: 0,
+                offer_number: 0,
+                target: '情報系',
+                international_flg: 1,
+                disability_flg: 1,
+                supplementary: '会社概要etc...',
+            };
             return{
-                time:[
-                    {value:"8:00"},
-                    {value:"9:00"},
-                    {value:"10:00"},
-                    {value:"11:00"},
-                    {value:"12:00"},
-                    {value:"13:00"},
-                    {value:"14:00"},
-                    {value:"15:00"},
-                    {value:"16:00"},
-                    {value:"17:00"},
-                    {value:"18:00"},
-                    {value:"19:00"},
-                    {value:"20:00"},
-                    {value:"21:00"},
-                    {value:"22:00"},
-                ]
+                rows:rows,
+                briefing:[],
+                insert_briefing:insert_briefing,
             }
         },
-
+        methods:{
+            data_insert:function (array) {
+                this.insert_briefing = {
+                    finish_flg:0,
+                    division:array.division,
+                    joboffer_number:array.joboffer_number,
+                    event_date:array.event_date,
+                    start_time:array.start_time,
+                    finish_time:array.finish_time,
+                    company_name:array.company_name,
+                    venue:array.venue,
+                    occupation:array.occupation,
+                    content:array.content,
+                    bring_item:array.bring_item,
+                    briefing_deadline:array.briefing_deadline,
+                    exam_deadline:array.exam_deadline,
+                    workplace:array.workplace,
+                    briefing_number:array.briefing_number,
+                    exam_number:array.exam_number,
+                    offer_number:array.offer_number,
+                    target:array.target,
+                    international_flg:array.international_flg,
+                    disability_flg:array.disability_flg,
+                    supplementary:array.supplementary,
+                };
+                console.log(this.insert_briefing);
+                const json_data = JSON.stringify(this.insert_briefing);
+                fetch('http://ec2-18-177-93-10.ap-northeast-1.compute.amazonaws.com/assignDB/event/event_insert.php',{
+                    method:'POST',
+                    body:json_data,
+                    headers:{'Content-Type':'application'}
+                })
+                    .then(function (response){
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        console.log(data);
+                        // let obj = JSON.parse(data);
+                        // console.log(obj);
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+            }
+        }
     }
 </script>
 
 <style scoped>
+    div #insert_data_area{
+        border: 2px solid #cccccc;
+        padding: 10px;
+        margin: 0 5% 5px 5%;
+    }
+    input #insert_data_btn{
+        margin-right: 5%;
+    }
 
 </style>
