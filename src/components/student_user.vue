@@ -23,25 +23,10 @@
 
         <!--body-->
 
-        <input type="text" v-model="searchWord" placeholder="キーワード検索">
-
-        <table align="center">
-            <thead>
-            <tr>
-                <th v-for="(value,key) in columns" @click="sortBy(key)">
-                    {{value}}
-                    <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(student,index) in filteredStudents">
-                <td v-for="(value,key) in columns">
-                    <input v-model="students[index][key]">
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <vue-good-table :columns="columns"
+                        :rows="students"
+                        :search-options="{enabled: true,placeholder: 'Search this table',}">
+        </vue-good-table>
 
     </div>
 </template>
@@ -50,28 +35,45 @@
     export default {
         name: "student_user",
         data:function() {
-            const columns = {
-                student_number: '学籍番号',
-                student_name: '氏名',
-                student_sex: '性別',
-                student_age: '年齢',
-                student_belong: '所属',
-                student_grade: '学年',
-                student_status: '状況',
-                student_emotion: '感情',
-            };
-
-            let sortOrders = {};
-            Object.keys(columns).forEach(function (key) {
-                sortOrders[key] = 1
-            });
+            const columns = [
+                {
+                    label:'学籍番号',
+                    field:'student_number',
+                    type:'number',
+                },
+                {
+                    label:'氏名',
+                    field:'student_name',
+                },
+                {
+                    label:'性別',
+                    field:'student_sex',
+                },
+                {
+                    label:'年齢',
+                    field:'student_age',
+                },
+                {
+                    label:'所属',
+                    field:'student_belong',
+                },
+                {
+                    label:'学年',
+                    field:'student_grade',
+                },
+                {
+                    label:'状況',
+                    field:'student_status',
+                },
+                {
+                    label:'感情',
+                    field:'student_emotion',
+                },
+            ];
 
             return{
                 students:[],
                 columns:columns,
-                searchWord:'',
-                sortKey:'',
-                sortOrders:sortOrders
             }
         },
 

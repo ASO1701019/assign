@@ -4,6 +4,7 @@ import sign_in from '@/components/sign_in'
 import student_user from "@/components/student_user"
 import briefing_list from "@/components/briefing_list"
 import briefings_list from "@/components/briefings_list"
+import briefing_update from "@/components/briefing_update"
 import calendar from "@/components/calendar"
 import briefing_add from "@/components/briefing_add"
 
@@ -26,6 +27,10 @@ export default new Router({
         {
             path: '/briefing_list',
             component: briefing_list
+        },
+        {
+            path: '/briefing_update',
+            component: briefing_update
         },
         {
             path: '/calendar',

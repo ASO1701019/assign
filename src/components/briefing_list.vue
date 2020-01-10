@@ -46,6 +46,7 @@
             </tr>
             </tbody>
         </table>
+<!--        <vue-good-table :columns="columns" :rows="briefings"></vue-good-table>-->
 
     </div>
 </template>
@@ -66,6 +67,51 @@
                 disability:'障がい者',
             };
 
+            // const columns = [
+            //         {
+            //             label:'求人No.',
+            //             field:'job_offer_no',
+            //             type:'number',
+            //         },
+            //         {
+            //             label:'区分',
+            //             field:'district',
+            //         },
+            //         {
+            //             label:'企業名',
+            //             field:'company_name',
+            //         },
+            //         {
+            //             label:'内容',
+            //             field:'content',
+            //         },
+            //         {
+            //             label:'開催日時',
+            //             field:'briefing_date',
+            //             type:'date',
+            //             dateInputFormat:'yyyy/MM/dd',
+            //             dateOutputFormat:'yyyy-MM-dd',
+            //         },
+            //         {
+            //             label:'職業',
+            //             field:'occupation',
+            //         },
+            //         {
+            //             label:'対象',
+            //             field:'target',
+            //         },
+            //         {
+            //             label:'留学生',
+            //             field:'international',
+            //             type:'boolean',
+            //         },
+            //         {
+            //             label:'障がい者',
+            //             field:'disability',
+            //             type:'boolean',
+            //         }
+            //     ];
+
             let sortOrders = {};
             Object.keys(columns).forEach(function (key) {
                 sortOrders[key] = 1
@@ -73,6 +119,7 @@
 
             return{
                 columns:columns,
+
                 searchWord:'',
                 briefings:[],
                 sortKey:'',

@@ -14,42 +14,29 @@
             </tr>
             <tr>
                 <td colspan="2" class="colspan">
-                    <router-link to="/briefings_list">説明会管理</router-link>
-                    &nbsp;&nbsp;&nbsp;
-                    <router-link to="/calendar">カレンダー</router-link>
-                    <router-link to="/briefing_add" style="position: absolute; right: 15%;">新規説明会追加</router-link>
-<!--                    <input type="button" value="スプレッドシート更新" id="updateButton" style="position: absolute; right: 5%">-->
+                    <button>
+                        <router-link to="/briefings_list">説明会管理</router-link>
+                    </button>
+                    <button>
+                        <router-link to="/calendar">カレンダー</router-link>
+                    </button>
+                    <button style="position: absolute; right: 15%;">
+                        <router-link to="/briefing_add">新規説明会追加</router-link>
+                    </button>
                 </td>
             </tr>
         </table>
         <hr>
 
         <!--body-->
+<!--        {{briefings}}-->
 
-        <input type="text" v-model="searchWord" placeholder="キーワード検索">
+        <vue-good-table :columns="columns"
+                        :rows="briefings"
+                        :search-options="{enabled: true,placeholder: 'Search this table',}"
+                        @on-row-dblclick="click_alert">
+        </vue-good-table>
 
-        <table align="center">
-            <thead>
-            <tr>
-                <th v-for="(value , key) in columns" @click="sortBy(key)">
-                    {{value}}
-                    <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
-                </th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(briefing,index) in filteredBriefings">
-                <td v-for="(value,key) in columns">
-                    <input v-model="briefings[index][key]">
-                </td>
-                <td>
-                    <button v-on:click="click_update(briefing)">更新</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <!--{{briefings}}-->
     </div>
 </template>
 
@@ -57,106 +44,76 @@
     export default {
         name: "briefings_list",
         data:function(){
-            let columns = {
-                joboffer_number:'求人No.',
-                division:'区分',
-                company_name:'企業名',
-                content:'内容',
-                event_date:'開催日時',
-                occupation:'職種',
-                target:'対象',
-                international_flg:'留学生',
-                disability_flg:'障がい者',
-            };
-            let sortOrders = {};
-            Object.keys(columns).forEach(function (key) {
-                sortOrders[key] = 1
-            });
+            const columns = [
+                {
+                    label:'求人No.',
+                    field:'joboffer_number',
+                    type:'number',
+                },
+                {
+                    label:'区分',
+                    field:'division',
+                },
+                {
+                    label:'企業名',
+                    field:'company_name',
+                },
+                {
+                    label:'内容',
+                    field:'content',
+                },
+                {
+                    label:'開催日時',
+                    field:'event_date',
+                    type:'date',
+                    dateInputFormat:'yyyy-MM-dd',
+                    dateOutputFormat:'yyyy/MM/dd',
+                },
+                {
+                    label:'職業',
+                    field:'occupation',
+                },
+                {
+                    label:'対象',
+                    field:'target',
+                },
+                {
+                    label:'留学生',
+                    field:'international_flg',
+                    type:'boolean',
+                },
+                {
+                    label:'障がい者',
+                    field:'disability_flg',
+                    type:'boolean',
+                },
+                // {
+                //     label:'更新',
+                //     field:'update_btn',
+                // }
+            ];
+
             return {
                 briefings:[],
                 columns:columns,
-                searchWord:'',
-                sortKey:'',
-                sortOrders:sortOrders,
             }
         },
         methods:{
-            sortBy: function (key) {
-                this.sortKey = key;
-                this.sortOrders[key] = this.sortOrders[key] * -1;
-            },
-            click_update:function (array) {
-                alert(array.event_number + "番目を更新します");
-                let update_briefing = {
-                    event_number:array.event_number,
-                    division:array.division,
-                    joboffer_number:array.joboffer_number,
-                    event_date:array.event_date,
-                    start_time:array.start_time,
-                    finish_time:array.finish_time,
-                    company_name:array.company_name,
-                    venue:array.venue,
-                    occupation:array.occupation,
-                    content:array.content,
-                    bring_item:array.bring_item,
-                    briefing_deadline:array.briefing_deadline,
-                    exam_deadline:array.exam_deadline,
-                    workplace:array.workplace,
-                    briefing_number:array.briefing_number,
-                    exam_number:array.exam_number,
-                    offer_number:array.offer_number,
-                    target:array.target,
-                    international_flg:array.international_flg,
-                    disability_flg:array.disability_flg,
-                    supplementary:array.supplementary,
-                };
-                console.log(update_briefing);
-                const json_data = JSON.stringify(update_briefing);
-                fetch('http://ec2-18-177-93-10.ap-northeast-1.compute.amazonaws.com/assignDB/event/event_update.php',{
-                    method:'POST',
-                    body:json_data,
-                    headers:{'Content-Type':'application'}
-                })
-                    .then(function (response){
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        console.log(data);
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    })
+            click_alert:function(param){
+                // alert(param.row.event_number);
+                let row_data = param.row;
+                let test = '/#/briefing_update?id=' + row_data.event_number;
+                window.location.href = test;
             },
         },
+
         computed:{
-            filteredBriefings:function(){
-                let data = this.briefings;
 
-                let sortKey = this.sortKey;
-                let order = this.sortOrders[sortKey] || 1;
-
-                let filterWord = this.searchWord && this.searchWord.toLowerCase();
-
-                if(filterWord){
-                    data = data.filter(function (row) {
-                        return Object.keys(row).some(function (key) {
-                            return String(row[key]).toLowerCase().indexOf(filterWord) > -1
-                        })
-                    })
-                }
-
-                if(sortKey){
-                    data = data.slice().sort(function (a,b) {
-                        a = a[sortKey];
-                        b = b[sortKey];
-                        return (a === b ? 0 : a > b ? 1 : -1) * order;
-                    })
-                }
-                return data;
-            }
         },
+
         created(){
             let hoge = this;
+            console.log(hoge);
             fetch('http://ec2-18-177-93-10.ap-northeast-1.compute.amazonaws.com/assignDB/all_post.php')
                 .then(function(response) {
                     return response.json();
